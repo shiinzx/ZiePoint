@@ -212,6 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
     required int points,
     required Color color,
     required IconData icon,
+    required VoidCallback onTap,
   }) {
     return Card(
       elevation: 0,
@@ -223,51 +224,55 @@ class _DashboardPageState extends State<DashboardPage> {
           width: 1,
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(icon, color: color, size: 24),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    "Poin",
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(icon, color: color, size: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      "Poin",
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                points.toString(),
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: color,
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              points.toString(),
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: color,
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              const SizedBox(height: 4),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -494,6 +499,16 @@ class _DashboardPageState extends State<DashboardPage> {
                       points: totalPelanggaran,
                       color: Theme.of(context).colorScheme.error,
                       icon: Icons.warning_amber_rounded,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/detail_poin',
+                          arguments: {
+                            'tipe': 'pelanggaran',
+                            'totalPoin': totalPelanggaran,
+                          },
+                        ).then((_) => loadUser());
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -503,6 +518,16 @@ class _DashboardPageState extends State<DashboardPage> {
                       points: totalPrestasi,
                       color: Colors.green.shade700,
                       icon: Icons.emoji_events_outlined,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/detail_poin',
+                          arguments: {
+                            'tipe': 'prestasi',
+                            'totalPoin': totalPrestasi,
+                          },
+                        ).then((_) => loadUser());
+                      },
                     ),
                   ),
                 ],
@@ -563,55 +588,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                "Riwayat Catatan Poin",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
-              ),
-              const SizedBox(height: 10),
-              _myPoints.isEmpty
-                  ? Card(
-                      elevation: 0,
-                      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                size: 48,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                "Belum ada riwayat catatan poin",
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _myPoints.length,
-                      itemBuilder: (context, index) {
-                        final log = _myPoints[index];
-                        return _buildHistoryCard(log);
-                      },
-                    ),
             ],
           ),
         ),
