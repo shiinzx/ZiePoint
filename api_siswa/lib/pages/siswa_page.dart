@@ -30,7 +30,7 @@ class _SiswaPageState extends State<SiswaPage> {
 
     setState(() {
       _siswaList = siswa;
-      profile = prof;
+      profile = prof['user'];
       _isLoading = false;
     });
   }

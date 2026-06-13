@@ -29,7 +29,7 @@ class _JenisCatatanPageState extends State<JenisCatatanPage> {
 
       setState(() {
         _list = data;
-        profile = prof;
+        profile = prof['user'];
         _loading = false;
       });
     } catch (e) {
