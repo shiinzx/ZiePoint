@@ -125,6 +125,7 @@ class _InputPoinPageState extends State<InputPoinPage> {
 
                       // DROPDOWN SISWA
                       DropdownButtonFormField<int>(
+                        isExpanded: true,
                         value: _selectedSiswaId,
                         decoration: InputDecoration(
                           labelText: "Pilih Siswa",
@@ -138,7 +139,10 @@ class _InputPoinPageState extends State<InputPoinPage> {
                         items: _siswaList.map((s) {
                           return DropdownMenuItem<int>(
                             value: s.id,
-                            child: Text("${s.nama} (${s.kelas.toUpperCase()})"),
+                            child: Text(
+                              "${s.nama} (${s.kelas.toUpperCase()})",
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           );
                         }).toList(),
                         onChanged: (val) {
@@ -151,6 +155,7 @@ class _InputPoinPageState extends State<InputPoinPage> {
 
                       // DROPDOWN JENIS CATATAN
                       DropdownButtonFormField<int>(
+                        isExpanded: true,
                         value: _selectedJenisId,
                         decoration: InputDecoration(
                           labelText: "Pilih Jenis Catatan / Poin",
@@ -165,7 +170,10 @@ class _InputPoinPageState extends State<InputPoinPage> {
                           final pointSign = j.tipe == 'pelanggaran' ? "-" : "+";
                           return DropdownMenuItem<int>(
                             value: j.id,
-                            child: Text("${j.nama} ($pointSign${j.poin} Poin)"),
+                            child: Text(
+                              "${j.nama} ($pointSign${j.poin} Poin)",
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           );
                         }).toList(),
                         onChanged: (val) {
