@@ -160,10 +160,15 @@ app.put("/siswa/:id", verifyToken, (req, res) => {
 // ================= DELETE SISWA =================
 app.delete("/siswa/:id", verifyToken, (req, res) => {
   const { id } = req.params;
-  const sql = "DELETE FROM siswa WHERE id_siswa = ?";
-  db.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ message: "Gagal menghapus siswa" });
-    res.json({ message: "Berhasil menghapus siswa" });
+  const sqlDeleteLogs = "DELETE FROM catatan_siswa WHERE id_siswa = ?";
+  db.query(sqlDeleteLogs, [id], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal menghapus catatan siswa" });
+
+    const sqlDeleteSiswa = "DELETE FROM siswa WHERE id_siswa = ?";
+    db.query(sqlDeleteSiswa, [id], (err, result2) => {
+      if (err) return res.status(500).json({ message: "Gagal menghapus siswa" });
+      res.json({ message: "Berhasil menghapus siswa" });
+    });
   });
 });
 
@@ -201,10 +206,15 @@ app.put("/jenis_catatan/:id", verifyToken, (req, res) => {
 // ================= DELETE JENIS CATATAN =================
 app.delete("/jenis_catatan/:id", verifyToken, (req, res) => {
   const { id } = req.params;
-  const sql = "DELETE FROM jenis_catatan WHERE id_jenis = ?";
-  db.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ message: "Gagal menghapus jenis catatan" });
-    res.json({ message: "Berhasil menghapus jenis catatan" });
+  const sqlDeleteLogs = "DELETE FROM catatan_siswa WHERE id_jenis = ?";
+  db.query(sqlDeleteLogs, [id], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal menghapus catatan jenis" });
+
+    const sqlDeleteJenis = "DELETE FROM jenis_catatan WHERE id_jenis = ?";
+    db.query(sqlDeleteJenis, [id], (err, result2) => {
+      if (err) return res.status(500).json({ message: "Gagal menghapus jenis catatan" });
+      res.json({ message: "Berhasil menghapus jenis catatan" });
+    });
   });
 });
 
