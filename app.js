@@ -177,6 +177,37 @@ app.get("/jenis_catatan/:tipe", verifyToken, (req, res) => {
   });
 });
 
+// ================= ADD JENIS CATATAN =================
+app.post("/jenis_catatan", verifyToken, (req, res) => {
+  const { nama, deskripsi, tipe, poin } = req.body;
+  const sql = "INSERT INTO jenis_catatan (nama, deskripsi, tipe, poin) VALUES (?, ?, ?, ?)";
+  db.query(sql, [nama, deskripsi, tipe, poin], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal menambah jenis catatan" });
+    res.json({ message: "Berhasil menambah jenis catatan", id: result.insertId });
+  });
+});
+
+// ================= UPDATE JENIS CATATAN =================
+app.put("/jenis_catatan/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+  const { nama, deskripsi, tipe, poin } = req.body;
+  const sql = "UPDATE jenis_catatan SET nama = ?, deskripsi = ?, tipe = ?, poin = ? WHERE id_jenis = ?";
+  db.query(sql, [nama, deskripsi, tipe, poin, id], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal mengupdate jenis catatan" });
+    res.json({ message: "Berhasil mengupdate jenis catatan" });
+  });
+});
+
+// ================= DELETE JENIS CATATAN =================
+app.delete("/jenis_catatan/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM jenis_catatan WHERE id_jenis = ?";
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal menghapus jenis catatan" });
+    res.json({ message: "Berhasil menghapus jenis catatan" });
+  });
+});
+
 // ================= TEST =================
 app.get("/", (req, res) => {
   res.send("API jalan bro 🚀");

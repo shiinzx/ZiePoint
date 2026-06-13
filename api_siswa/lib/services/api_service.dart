@@ -74,4 +74,27 @@ class ApiService {
     final List data = jsonDecode(res.body);
     return data.map((e) => JenisCatatan.fromJson(e)).toList();
   }
+
+  static Future<void> addJenisCatatan(JenisCatatan jenis) async {
+    await http.post(
+      Uri.parse('$baseUrl/jenis_catatan'),
+      headers: await _authHeader(),
+      body: jsonEncode(jenis.toJson()),
+    );
+  }
+
+  static Future<void> updateJenisCatatan(int id, JenisCatatan jenis) async {
+    await http.put(
+      Uri.parse('$baseUrl/jenis_catatan/$id'),
+      headers: await _authHeader(),
+      body: jsonEncode(jenis.toJson()),
+    );
+  }
+
+  static Future<void> deleteJenisCatatan(int id) async {
+    await http.delete(
+      Uri.parse('$baseUrl/jenis_catatan/$id'),
+      headers: await _authHeader(),
+    );
+  }
 }

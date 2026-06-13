@@ -43,8 +43,149 @@ class _SiswaPageState extends State<SiswaPage> {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
+  void _showSiswaDialog([Siswa? siswa]) {
+    final nameCtrl = TextEditingController(text: siswa?.nama ?? '');
+    final classCtrl = TextEditingController(text: siswa?.kelas ?? '');
+    final nisCtrl = TextEditingController(text: siswa?.nis ?? '');
+    final passCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(siswa == null ? "Tambah Siswa" : "Edit Siswa"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(labelText: "Nama"),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: classCtrl,
+                  decoration: const InputDecoration(labelText: "Kelas"),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: nisCtrl,
+                  decoration: const InputDecoration(labelText: "NIS"),
+                ),
+                if (siswa == null) ...[
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: passCtrl,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: "Password (Opsional)",
+                      hintText: "Default: 123456",
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (nameCtrl.text.isEmpty || classCtrl.text.isEmpty || nisCtrl.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Harap isi semua field")),
+                  );
+                  return;
+                }
+                Navigator.pop(context);
+                setState(() => _isLoading = true);
+
+                try {
+                  if (siswa == null) {
+                    await ApiService.addSiswa(Siswa(
+                      nama: nameCtrl.text,
+                      kelas: classCtrl.text,
+                      nis: nisCtrl.text,
+                      password: passCtrl.text.isNotEmpty ? passCtrl.text : null,
+                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Berhasil menambah siswa")),
+                    );
+                  } else {
+                    await ApiService.updateSiswa(
+                      siswa.id!,
+                      Siswa(
+                        nama: nameCtrl.text,
+                        kelas: classCtrl.text,
+                        nis: nisCtrl.text,
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Berhasil mengubah data siswa")),
+                    );
+                  }
+                  _loadAll();
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Gagal menyimpan data")),
+                  );
+                  setState(() => _isLoading = false);
+                }
+              },
+              child: const Text("Simpan"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteSiswa(int id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Hapus Siswa"),
+        content: const Text("Apakah Anda yakin ingin menghapus data siswa ini?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Batal"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            child: const Text("Hapus"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() => _isLoading = true);
+      try {
+        await ApiService.deleteSiswa(id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Berhasil menghapus siswa")),
+        );
+        _loadAll();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Gagal menghapus siswa")),
+        );
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isGuru = profile?['role'] == 'guru';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Data Siswa'),
@@ -119,11 +260,27 @@ class _SiswaPageState extends State<SiswaPage> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text('${s.kelas.toUpperCase()} • NIS: ${s.nis}'),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
-                          ),
+                          trailing: isGuru
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit_outlined, size: 20),
+                                      color: Theme.of(context).colorScheme.primary,
+                                      onPressed: () => _showSiswaDialog(s),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline, size: 20),
+                                      color: Theme.of(context).colorScheme.error,
+                                      onPressed: () => _deleteSiswa(s.id!),
+                                    ),
+                                  ],
+                                )
+                              : Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 14,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                                ),
                         ),
                       );
                     },
@@ -131,6 +288,12 @@ class _SiswaPageState extends State<SiswaPage> {
                 ),
               ],
             ),
+      floatingActionButton: isGuru
+          ? FloatingActionButton(
+              onPressed: () => _showSiswaDialog(),
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
