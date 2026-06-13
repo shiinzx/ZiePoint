@@ -278,6 +278,16 @@ class _JenisCatatanPageState extends State<JenisCatatanPage> {
       appBar: AppBar(
         title: const Text("Jenis Catatan"),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              Navigator.of(context).pushReplacementNamed('/home');
+            }
+          },
+        ),
       ),
 
       body: Padding(

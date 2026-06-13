@@ -189,6 +189,16 @@ class _SiswaPageState extends State<SiswaPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Data Siswa'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              Navigator.of(context).pushReplacementNamed('/home');
+            }
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
