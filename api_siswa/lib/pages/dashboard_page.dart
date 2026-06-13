@@ -14,6 +14,8 @@ class _DashboardPageState extends State<DashboardPage> {
   String id = "-";
   String nama = "-";
   String email = "-";
+  String nip = "-";
+  String nis = "-";
   String role = "-";
   String kelas = "-";
 
@@ -39,7 +41,9 @@ class _DashboardPageState extends State<DashboardPage> {
         setState(() {
           id = decoded['id'].toString();
           nama = decoded['nama'] ?? "-";
-          email = decoded['email'] ?? decoded['nis'] ?? decoded['nip'] ?? "-";
+          email = decoded['email'] ?? "-";
+          nip = decoded['nip'] ?? "-";
+          nis = decoded['nis'] ?? "-";
           role = decoded['role'] ?? "user";
           kelas = decoded['kelas'] ?? "-";
         });
@@ -241,8 +245,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   const SizedBox(height: 4),
                   Text(
                     isSiswa
-                        ? "NIS: $email • Kelas: ${kelas.toUpperCase()}"
-                        : "NIP: $email",
+                        ? "NIS: $nis • Kelas: ${kelas.toUpperCase()}"
+                        : "NIP: $nip",
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.8),
@@ -499,15 +503,6 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             _buildProfileCard(),
             const SizedBox(height: 20),
-            Text(
-              "Menu Utama",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
-            ),
-            const SizedBox(height: 12),
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
