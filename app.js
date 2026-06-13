@@ -208,6 +208,46 @@ app.delete("/jenis_catatan/:id", verifyToken, (req, res) => {
   });
 });
 
+// ================= GET ALL JENIS CATATAN =================
+app.get("/jenis_catatan_all", verifyToken, (req, res) => {
+  const sql = "SELECT * FROM jenis_catatan";
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ message: "Error server" });
+    res.json(results);
+  });
+});
+
+// ================= GET MY POINTS (SISWA) =================
+app.get("/catatan_siswa/siswa/my-points", verifyToken, (req, res) => {
+  const id_siswa = req.user.id;
+  const sql = `
+    SELECT c.id_catatan, c.tanggal, c.keterangan, 
+           j.nama AS jenis_nama, j.deskripsi AS jenis_deskripsi, j.tipe, j.poin, 
+           g.nama AS guru_nama 
+    FROM catatan_siswa c 
+    JOIN jenis_catatan j ON c.id_jenis = j.id_jenis 
+    LEFT JOIN guru g ON c.id_guru = g.id_guru 
+    WHERE c.id_siswa = ? 
+    ORDER BY c.tanggal DESC
+  `;
+  db.query(sql, [id_siswa], (err, results) => {
+    if (err) return res.status(500).json({ message: "Error server" });
+    res.json(results);
+  });
+});
+
+// ================= INPUT POIN SISWA (GURU) =================
+app.post("/catatan_siswa", verifyToken, (req, res) => {
+  const { id_siswa, id_jenis, keterangan } = req.body;
+  const id_guru = req.user.id;
+  const tanggal = new Date();
+  const sql = "INSERT INTO catatan_siswa (id_guru, id_siswa, id_jenis, tanggal, keterangan) VALUES (?, ?, ?, ?, ?)";
+  db.query(sql, [id_guru, id_siswa, id_jenis, tanggal, keterangan], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal menginput poin" });
+    res.json({ message: "Berhasil menginput poin", id: result.insertId });
+  });
+});
+
 // ================= TEST =================
 app.get("/", (req, res) => {
   res.send("API jalan bro 🚀");

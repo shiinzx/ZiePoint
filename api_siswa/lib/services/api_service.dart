@@ -97,4 +97,33 @@ class ApiService {
       headers: await _authHeader(),
     );
   }
+
+  static Future<List<JenisCatatan>> getAllJenisCatatan() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/jenis_catatan_all'),
+      headers: await _authHeader(),
+    );
+    final List data = jsonDecode(res.body);
+    return data.map((e) => JenisCatatan.fromJson(e)).toList();
+  }
+
+  static Future<List<dynamic>> getMyPoints() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/catatan_siswa/siswa/my-points'),
+      headers: await _authHeader(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<void> inputPoinSiswa(int idSiswa, int idJenis, String keterangan) async {
+    await http.post(
+      Uri.parse('$baseUrl/catatan_siswa'),
+      headers: await _authHeader(),
+      body: jsonEncode({
+        'id_siswa': idSiswa,
+        'id_jenis': idJenis,
+        'keterangan': keterangan,
+      }),
+    );
+  }
 }
