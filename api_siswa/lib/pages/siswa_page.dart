@@ -224,7 +224,7 @@ class _SiswaPageState extends State<SiswaPage> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     title: Text(
-                      "Login sebagai: ${profile?['email'] ?? profile?['nis'] ?? profile?['nip'] ?? '-'}",
+                      "Login sebagai: ${profile?['nama'] ?? '-'}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onSecondaryContainer,
