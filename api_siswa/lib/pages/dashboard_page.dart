@@ -139,6 +139,71 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  Widget _buildHorizontalMenuButton({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required String route,
+    required Color color,
+  }) {
+    return Card(
+      elevation: 0,
+      color: color.withOpacity(0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: color.withOpacity(0.2),
+          width: 1.2,
+        ),
+      ),
+      child: InkWell(
+        onTap: () => Navigator.pushNamed(context, route),
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 36,
+                color: color,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: color.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: color,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildProfileCard() {
     final isSiswa = role == 'siswa';
     return Card(
@@ -427,7 +492,7 @@ class _DashboardPageState extends State<DashboardPage> {
           )
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,18 +508,26 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             const SizedBox(height: 12),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                children: [
-                  menu("Data Siswa", Icons.people, '/siswa', Colors.blue.shade700),
-                  menu("Jenis Catatan", Icons.note, '/jenis', Colors.orange.shade800),
-                  menu("Input Poin", Icons.add_moderator_outlined, '/input_poin', Colors.teal.shade700),
-                ],
-              ),
-            )
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.1,
+              children: [
+                menu("Data Siswa", Icons.people, '/siswa', Colors.blue.shade700),
+                menu("Jenis Catatan", Icons.note, '/jenis', Colors.orange.shade800),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildHorizontalMenuButton(
+              title: "Input Poin Siswa",
+              subtitle: "Catat poin pelanggaran atau prestasi siswa",
+              icon: Icons.add_moderator_outlined,
+              route: '/input_poin',
+              color: Colors.teal.shade700,
+            ),
           ],
         ),
       ),
