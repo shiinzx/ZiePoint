@@ -14,11 +14,7 @@ class _JenisCatatanPageState extends State<JenisCatatanPage> {
   String _filter = 'pelanggaran';
   bool _loading = true;
 
-  final Color red = const Color(0xffEF4444);
-  final Color green = const Color(0xff22C55E);
-  final Color bg = const Color(0xffF9FAFB);
 
-  Color get accent => _filter == 'pelanggaran' ? red : green;
 
   @override
   void initState() {
@@ -41,101 +37,75 @@ class _JenisCatatanPageState extends State<JenisCatatanPage> {
     }
   }
 
-  Widget _tab(String text) {
-    final active = _filter == text;
-    final color = text == 'pelanggaran' ? red : green;
 
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() => _filter = text);
-          _load();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: active ? color : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            text.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: active ? Colors.white : Colors.black54,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _card(JenisCatatan d) {
     final isPelanggaran = _filter == 'pelanggaran';
     final pointText = isPelanggaran ? "-${d.poin}" : "+${d.poin}";
-    final color = isPelanggaran ? red : green;
+    final color = isPelanggaran
+        ? Theme.of(context).colorScheme.error
+        : Theme.of(context).colorScheme.primary;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border(
-          left: BorderSide(color: color, width: 4),
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: color.withOpacity(0.3),
+          width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-          )
-        ],
       ),
-      child: Row(
-        children: [
-          // POINT BADGE
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              pointText,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
+      color: color.withOpacity(0.04),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // POINT BADGE
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                pointText,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ),
-          ),
 
-          const SizedBox(width: 12),
+            const SizedBox(width: 16),
 
-          // TEXT
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  d.nama,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+            // TEXT
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    d.nama,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  d.deskripsi,
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 12,
+                  const SizedBox(height: 4),
+                  Text(
+                    d.deskripsi,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 13,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -143,13 +113,11 @@ class _JenisCatatanPageState extends State<JenisCatatanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: Theme.of(context).colorScheme.background,
 
       appBar: AppBar(
         title: const Text("Jenis Catatan"),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0.5,
+        elevation: 0,
       ),
 
       body: Padding(
@@ -157,17 +125,36 @@ class _JenisCatatanPageState extends State<JenisCatatanPage> {
         child: Column(
           children: [
             // TAB FILTER
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  _tab("pelanggaran"),
-                  _tab("prestasi"),
+            SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<String>(
+                segments: const <ButtonSegment<String>>[
+                  ButtonSegment<String>(
+                    value: 'pelanggaran',
+                    label: Text('Pelanggaran'),
+                    icon: Icon(Icons.warning_amber_rounded),
+                  ),
+                  ButtonSegment<String>(
+                    value: 'prestasi',
+                    label: Text('Prestasi'),
+                    icon: Icon(Icons.emoji_events_outlined),
+                  ),
                 ],
+                selected: <String>{_filter},
+                onSelectionChanged: (Set<String> newSelection) {
+                  setState(() {
+                    _filter = newSelection.first;
+                  });
+                  _load();
+                },
+                style: SegmentedButton.styleFrom(
+                  selectedBackgroundColor: _filter == 'pelanggaran'
+                      ? Theme.of(context).colorScheme.errorContainer
+                      : Theme.of(context).colorScheme.primaryContainer,
+                  selectedForegroundColor: _filter == 'pelanggaran'
+                      ? Theme.of(context).colorScheme.onErrorContainer
+                      : Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ),
 

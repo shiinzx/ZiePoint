@@ -18,6 +18,20 @@ class MyApp extends StatelessWidget {
 
       initialRoute: '/login',
 
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          primary: Colors.blue.shade700,
+          secondary: Colors.blueGrey,
+          background: Colors.grey.shade50,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
+      ),
+
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const DashboardPage(), // 🔥 sekarang ke dashboard

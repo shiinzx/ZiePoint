@@ -11,16 +11,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final email = TextEditingController();
+  final username = TextEditingController();
   final password = TextEditingController();
 
   bool _loading = false;
 
-  final Color primary = const Color(0xff2563EB);
-  final Color bg = const Color(0xffF9FAFB);
-
   Future<void> _login() async {
-    if (email.text.isEmpty || password.text.isEmpty) {
+    if (username.text.isEmpty || password.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Isi semua field dulu")),
       );
@@ -31,10 +28,10 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final res = await http.post(
-        Uri.parse('http://10.0.2.2:3000/login'),
+        Uri.parse('http://localhost:3000/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "email": email.text.trim(),
+          "username": username.text.trim(),
           "password": password.text.trim(),
         }),
       );
@@ -66,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _loading = false);
   }
 
-  Widget _input(TextEditingController c, String hint,
+  Widget _input(BuildContext context, TextEditingController c, String hint,
       {bool obscure = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -74,14 +71,21 @@ class _LoginPageState extends State<LoginPage> {
         controller: c,
         obscureText: obscure,
         decoration: InputDecoration(
-          hintText: hint,
+          labelText: hint,
           filled: true,
-          fillColor: Colors.grey.shade100,
+          fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 2,
+            ),
           ),
         ),
       ),
@@ -91,62 +95,70 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                )
-              ],
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            elevation: 0,
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                _input(email, "Email"),
-                _input(password, "Password", obscure: true),
-
-                const SizedBox(height: 10),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _loading ? null : _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primary,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Login",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
-                    child: _loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Text("Masuk"),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 24),
+
+                  _input(context, username, "NIS / NIP"),
+                  _input(context, password, "Password", obscure: true),
+
+                  const SizedBox(height: 16),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _loading ? null : _login,
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _loading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "Masuk",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

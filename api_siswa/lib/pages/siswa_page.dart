@@ -60,14 +60,32 @@ class _SiswaPageState extends State<SiswaPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // 🔥 PROFILE (INI YANG LU TANYA)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  width: double.infinity,
-                  color: Colors.grey.shade200,
-                  child: Text(
-                    "Login sebagai: ${profile?['email'] ?? '-'}",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                Card(
+                  margin: const EdgeInsets.all(12),
+                  elevation: 0,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.person_pin,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text(
+                      "Login sebagai: ${profile?['email'] ?? profile?['nis'] ?? profile?['nip'] ?? '-'}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Role: ${profile?['role']?.toString().toUpperCase() ?? '-'}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.8),
+                      ),
+                    ),
                   ),
                 ),
 
@@ -76,9 +94,37 @@ class _SiswaPageState extends State<SiswaPage> {
                     itemCount: _siswaList.length,
                     itemBuilder: (_, i) {
                       final s = _siswaList[i];
-                      return ListTile(
-                        title: Text(s.nama),
-                        subtitle: Text('${s.kelas} - ${s.nis}'),
+                      return Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.4),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                            child: Text(
+                              s.nama.isNotEmpty ? s.nama[0].toUpperCase() : 'S',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            s.nama,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text('${s.kelas.toUpperCase()} • NIS: ${s.nis}'),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                          ),
+                        ),
                       );
                     },
                   ),
