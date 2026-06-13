@@ -98,14 +98,15 @@ class _DashboardPageState extends State<DashboardPage> {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
-  Widget menu(String title, IconData icon, String route) {
+  Widget menu(String title, IconData icon, String route, Color color) {
     return Card(
       elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+      color: color.withOpacity(0.08),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+          color: color.withOpacity(0.2),
+          width: 1.2,
         ),
       ),
       child: InkWell(
@@ -119,7 +120,7 @@ class _DashboardPageState extends State<DashboardPage> {
               Icon(
                 icon,
                 size: 44,
-                color: Theme.of(context).colorScheme.primary,
+                color: color,
               ),
               const SizedBox(height: 12),
               Text(
@@ -128,7 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: color,
                 ),
               ),
             ],
@@ -448,9 +449,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 children: [
-                  menu("Data Siswa", Icons.people, '/siswa'),
-                  menu("Jenis Catatan", Icons.note, '/jenis'),
-                  menu("Input Poin", Icons.add_moderator_outlined, '/input_poin'),
+                  menu("Data Siswa", Icons.people, '/siswa', Colors.blue.shade700),
+                  menu("Jenis Catatan", Icons.note, '/jenis', Colors.orange.shade800),
+                  menu("Input Poin", Icons.add_moderator_outlined, '/input_poin', Colors.teal.shade700),
                 ],
               ),
             )
