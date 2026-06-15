@@ -15,7 +15,7 @@ const db = mysql.createConnection({
   user: "root",
   password: "",
   database: "db_sekolah", // ⚠️ sesuaikan
-  port: 3307, //ganti jadi 3306
+  port: 3306, //ganti jadi 3306
 });
 
 db.connect((err) => {
